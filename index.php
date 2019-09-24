@@ -1,0 +1,32 @@
+<?php
+require_once('./LINEBotTiny.php');
+$channelAccessToken = '1595073400';
+$channelSecret = '09ab3a3f8649944e3d75f138002226ad';
+$client = new LINEBotTiny($channelAccessToken, $channelSecret);
+foreach ($client->parseEvents() as $event) {
+    switch ($event['type']) {
+        case 'message':
+            $message = $event['message'];
+            switch ($message['type']) {
+                case 'text':
+                    $client->replyMessage([
+                        'replyToken' => $event['replyToken'],
+                        'messages' => [
+                            [
+                                'type' => 'text',
+                                'text' => $message['text']
+                            ]
+                        ]
+                    ]);
+                    break;
+                default:
+                    error_log('Unsupported message type: ' . $message['type']);
+                    break;
+            }
+            break;
+        default:
+            error_log('Unsupported event type: ' . $event['type']);
+            break;
+    }
+};
+?>
